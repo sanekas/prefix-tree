@@ -3,4 +3,4 @@ project(prefix_tree)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(prefix_tree main.cpp PrefixTree.h)
+add_executable(prefix_tree main.cpp TMapBasedPrefixTree.cpp TTrieNode.cpp)
