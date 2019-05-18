@@ -35,44 +35,55 @@ public:
 		for (int i = 0; i < word.length(); i++) {
 			ptr = ptr->children[charToIndex(word[i])];
 			if (!ptr || (!ptr->wordEnd && i == word.length() - 1)
-				|| (ptr->wordEnd && i != word.length() - 1)
-					&& !ptr->children[charToIndex(word[i + 1])]) { return false; }
+				|| ((ptr->wordEnd && i != word.length() - 1)
+					&& !ptr->children[charToIndex(word[i + 1])])) { return false; }
 		}
 		return true;
 	}
-	/*
-	void returnSuggestion(Node *node, std::string &suggestion) {
-		for (const auto &child : node->children) {
-			if (child != nullptr) {
-				returnSuggestion(child, suggestion);
-				suggestion.push_back()
+
+
+	void returnSuggestion(Node *node, std::string &suggestion,
+						std::vector<std::string> &suggestions, const std::string &word) {
+		for (int i = 0; i < SIZE; i++) {
+			if (node->children[i] != nullptr) {
+				suggestion.push_back((char)('a' + i));
+				if (node->children[i]->wordEnd) {
+					suggestions.push_back(suggestion);
+				}
+				returnSuggestion(node->children[i], suggestion, suggestions, word);
+				suggestion.pop_back();
 			}
 		}
-	}*/
+	}
 
 	std::vector<std::string> Suggestions(const std::string& word) {
 		Node *ptr;
 		ptr = root;
+		std::string suggestion;
 		std::vector<std::string> suggestions;
-		for (const char &c : word) {
-			ptr = ptr->children[charToIndex(c)];
-			if (!ptr) { return {nullptr}; }
+		for (int i = 0; i < word.length() - 1; i++) {
+			ptr = ptr->children[charToIndex(word[i])];
+			if (!ptr) { return {""}; }
 		}
-		if (ptr->wordEnd) { return {nullptr}; }
-		for (const auto &child : ptr->children) {
-			Node *newPtr = ptr;
-
-		}
+		ptr = ptr->children[charToIndex(word[word.length() - 1])];
+		if (!ptr || ptr->wordEnd) { return {""}; }
+		suggestion += word;
+		returnSuggestion(ptr, suggestion, suggestions, word);
+		return suggestions;
 	}
 
-	~Trie() { delete root; }
+	~Trie() override { delete root; }
 };
 
 int main() {
 	Trie trie;
 	trie.AddWord("kdlfnh");
-	trie.AddWord("kdlnh");
+	trie.AddWord("kdlfnn");
 	trie.AddWord("vasyka");
-	std::cout << trie.Contains("vasyk");
+	//std::cout << trie.Contains("vasyka");
+	std::vector<std::string> suggestions = trie.Suggestions("");
+	for (const auto &item : suggestions) {
+		std::cout << item << std::endl;
+	}
 	return 0;
 }
