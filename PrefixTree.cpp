@@ -72,7 +72,15 @@ public:
 		return suggestions;
 	}
 
-	~Trie() override { delete root; }
+	void DestroyTrie(Node *root) {
+		if (root != nullptr) {
+			for (auto child : root->children) {
+				if (child != nullptr) DestroyTrie(child);
+			}
+		}
+	}
+
+	~Trie() override { DestroyTrie(root); }
 };
 
 int main() {
@@ -81,7 +89,7 @@ int main() {
 	trie.AddWord("kdlfnn");
 	trie.AddWord("vasyka");
 	//std::cout << trie.Contains("vasyka");
-	std::vector<std::string> suggestions = trie.Suggestions("");
+	std::vector<std::string> suggestions = trie.Suggestions("v");
 	for (const auto &item : suggestions) {
 		std::cout << item << std::endl;
 	}
